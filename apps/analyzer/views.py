@@ -1,12 +1,10 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import json
-from .lexer import lexer
-from .yacc import parser
 import io
 import sys
-
-
+from .lexer import LexerCR7
+from .yacc import parser
+import json
 @csrf_exempt
 def analyzer(request):
     """Function that analyze the code written in the frontend
@@ -17,10 +15,11 @@ def analyzer(request):
     Returns:
         JsonResponse: json object that contains the tokens and the lexer and yacc output
     """
-    print("body" ,request.body)
     body = json.loads(request.body)
-    print("body", body)
     data = body.get('code', '')
+    print('data', data)
+
+    lexer = LexerCR7()
     tokens = get_tokens(lexer, data)
 
     new_stdout = io.StringIO()
