@@ -17,8 +17,9 @@ def analyzer(request):
     Returns:
         JsonResponse: json object that contains the tokens and the lexer and yacc output
     """
-
+    print("body" ,request.body)
     body = json.loads(request.body)
+    print("body", body)
     data = body.get('code', '')
     tokens = get_tokens(lexer, data)
 
