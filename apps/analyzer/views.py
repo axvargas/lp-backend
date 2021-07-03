@@ -17,7 +17,6 @@ def analyzer(request):
     """
     body = json.loads(request.body)
     data = body.get('code', '')
-    print('data', data)
 
     lexer = LexerCR7()
     tokens = get_tokens(lexer, data)
