@@ -17,9 +17,11 @@ def analyzer(request):
     Returns:
         JsonResponse: json object that contains the tokens and the lexer and yacc output
     """
-    body = request.body.decode('utf-8')
-    print(body)
-    tokens = get_tokens(lexer, body)
+    print("body" ,request.body)
+    body = json.loads(request.body)
+    print("body", body)
+    data = body.get('code', '')
+    tokens = get_tokens(lexer, data)
 
     new_stdout = io.StringIO()
     sys.stdout = new_stdout
@@ -27,7 +29,7 @@ def analyzer(request):
     new_stderr = io.StringIO()
     sys.stderr = new_stderr
 
-    parser.parse(body)
+    parser.parse(data)
     lex_output = new_stdout.getvalue()
     syntax_output = new_stderr.getvalue()
 
