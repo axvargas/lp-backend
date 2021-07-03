@@ -1,4 +1,4 @@
-# Lenguajes de Programacioon - Dart CR7 version
+# Programing Languages - Dart CR7 version
 
 ## Prerequisites
 python3.8 or greater
