@@ -27,7 +27,8 @@ def analyzer(request):
     new_stderr = io.StringIO()
     sys.stderr = new_stderr
 
-    parser.parse(data)
+    lexer = LexerCR7()
+    parser.parse(data, lexer = lexer)
     lex_output = new_stdout.getvalue()
     syntax_output = new_stderr.getvalue()
 
