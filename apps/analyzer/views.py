@@ -2,9 +2,14 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import io
 import sys
-from .lexer import LexerCR7
+from .lexer import (
+    LexerCR7,
+    find_column
+)
 from .yacc import parser
 import json
+
+
 @csrf_exempt
 def analyzer(request):
     """Function that analyze the code written in the frontend
@@ -28,7 +33,7 @@ def analyzer(request):
     sys.stderr = new_stderr
 
     lexer = LexerCR7()
-    parser.parse(data, lexer = lexer)
+    parser.parse(data, lexer=lexer)
     lex_output = new_stdout.getvalue()
     syntax_output = new_stderr.getvalue()
 
@@ -61,7 +66,7 @@ def get_tokens(lexer, data):
             'tipo': tok.type,
             'token': tok.value,
             'linea': tok.lineno,
-            'colno': tok.lexpos
+            'colno': find_column(data, tok)
         })
         id += 1
 

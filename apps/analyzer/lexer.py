@@ -2,7 +2,7 @@
 Created Date: Friday July 2nd 2021 1:28:27 am
 Author: Andrés X. Vargas
 -----
-Last Modified: Saturday July 3rd 2021 5:38:00 pm
+Last Modified: Sunday July 4th 2021 3:04:26 am
 Modified By: the developer known as Andrés X. Vargas at <axvargas@fiec.espol.edu.ec>
 -----
 Copyright (c) 2021 MattuApps
@@ -10,48 +10,48 @@ Copyright (c) 2021 MattuApps
 import ply.lex as lex
 
 tokens = [
-        # Enmanuel Magannales
-        'AND',
-        'ARROW',  # @ replace => in arrow function
-        'ASSIGN',
-        'ASIGSUM',
-        'ASIGTIMES',
-        'ASIGDIV',
-        'MOD',
-        'COMMA',
-        'DIVISION',
-        'DDOTS',
-        'EQ',
-        'EQ_V',
-        'GT',
-        'DOT',
-        # Andres Vargas
-        'GTE',
-        'IDENT',
-        'INT',
-        'FLOAT',
-        'LBRACE',
-        'RBRACE',
-        'LBRACKET',
-        'RBRACKET',
-        'LT',
-        'LTE',
-        'NEGATION',
-        'NE',
-        # Josue Cobos
-        'MINUS',
-        'MINUSMINUS',
-        'OR',
-        'ASIGMINUS',
-        'TIMES',
-        'LPAREN',
-        'PLUS',
-        'PLUSPLUS',
-        'RPAREN',
-        'SEMICOLON',
-        'STRING',
-        'VIR'
-    ]
+    # Enmanuel Magannales
+    'AND',
+    'ARROW',  # @ replace => in arrow function
+    'ASSIGN',
+    'ASIGSUM',
+    'ASIGTIMES',
+    'ASIGDIV',
+    'MOD',
+    'COMMA',
+    'DIVISION',
+    'DDOTS',
+    'EQ',
+    'EQ_V',
+    'GT',
+    'DOT',
+    # Andres Vargas
+    'GTE',
+    'IDENT',
+    'INT',
+    'FLOAT',
+    'LBRACE',
+    'RBRACE',
+    'LBRACKET',
+    'RBRACKET',
+    'LT',
+    'LTE',
+    'NEGATION',
+    'NE',
+    # Josue Cobos
+    'MINUS',
+    'MINUSMINUS',
+    'OR',
+    'ASIGMINUS',
+    'TIMES',
+    'LPAREN',
+    'PLUS',
+    'PLUSPLUS',
+    'RPAREN',
+    'SEMICOLON',
+    'STRING',
+    'VIR'
+]
 
 reserved_words = {
     # Josue Cobos
@@ -113,6 +113,10 @@ reserved_words = {
 
 tokens = tokens + list(reserved_words.values())
 
+def find_column(input, token):
+    line_start = input.rfind('\n', 0, token.lexpos) + 1
+    return (token.lexpos - line_start) + 1
+    
 def LexerCR7():
 
     # Andres Vargas
@@ -163,13 +167,13 @@ def LexerCR7():
         t.type = reserved_words.get(t.value, 'IDENT')
         return t
 
-    def t_NEWLINE(t):
+    def t_newline(t):
         r'\n+'
-        t.lexer.lineno += t.value.count("\n")
+        t.lexer.lineno += len(t.value)
 
     def t_error(t):
-        print(
-            f"Illegal character '{t.value}' at line {t.lineno}, col {t.lexpos}")
+        col = find_column(t.lexer.lexdata, t)
+        print(f"Illegal character '{t.value}' at line {t.lineno}, col {col}")
         t.lexer.skip(1)
 
     def t_preprocessor(t):
@@ -177,4 +181,3 @@ def LexerCR7():
         t.lexer.lineno += 1
 
     return lex.lex()
-
