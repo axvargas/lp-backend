@@ -2,12 +2,13 @@
 Created Date: Friday July 2nd 2021 1:28:27 am
 Author: Andrés X. Vargas
 -----
-Last Modified: Sunday July 4th 2021 3:04:26 am
+Last Modified: Monday July 5th 2021 2:14:21 pm
 Modified By: the developer known as Andrés X. Vargas at <axvargas@fiec.espol.edu.ec>
 -----
 Copyright (c) 2021 MattuApps
 '''
 import ply.lex as lex
+
 
 tokens = [
     # Enmanuel Magannales
@@ -50,7 +51,8 @@ tokens = [
     'RPAREN',
     'SEMICOLON',
     'STRING',
-    'VIR'
+    'VIR',
+    'DOUBLE'
 ]
 
 reserved_words = {
@@ -64,6 +66,7 @@ reserved_words = {
     'break': 'BREAK',
     'dynamic': 'DYNAMIC',
     'double': 'DOUBLE_TYPE',
+    'float': 'FLOAT_TYPE',
     'else': 'ELSE',
     'enum': 'ENUM',
     'export': 'EXPORT',
@@ -103,9 +106,14 @@ reserved_words = {
     'trim': "TRIM_FUNC",
     'endsWith': "ENDSWITH_FUNC",
     'substring': "SUBSTRING_FUNC",
+    'codeUnitAt':"CODEUNITAT_FUNC",
+    'compareTo':"COMPARETO_FUNC",
     'join': "JOIN_FUNC",
     'contains': "CONTAINS_FUNC",
     'elementAt': "ELEMENTAT_FUNC",
+    'add': "ADD_FUNC",
+    'shuffle': "SHUFFLE_FUNC",
+    'getRange': "GETRANGE_FUNC",
     'addAll': 'ADD_ALL_FUNC',
     'containsKey': 'CONTAINS_DICT_FUNC',
     'containsValue': 'CONTAINS_VALUE_FUNC'
@@ -113,13 +121,14 @@ reserved_words = {
 
 tokens = tokens + list(reserved_words.values())
 
+
 def find_column(input, token):
     line_start = input.rfind('\n', 0, token.lexpos) + 1
     return (token.lexpos - line_start) + 1
     
+    
 def LexerCR7():
 
-    # Andres Vargas
     t_ignore = ' \t\x0c'
     t_PLUS = r'\+'
     t_MINUS = r'-'
@@ -157,24 +166,29 @@ def LexerCR7():
     t_OR = r'\|\|'
     t_DOT = r'\.'
 
-    # re_SIG = t_MINUS + r'?'
+    #re_SIG = t_MINUS + r'?'
     t_INT = r'\d+([uU]|[lL]|[uU][lL]|[lL][uU])?'
     t_FLOAT = r'((\d+)(\.\d+)(e(\+|-)?(\d+))? | (\d+)e(\+|-)?(\d+))([lL]|[fF])?'
+    t_DOUBLE = r'((\d+)(\.\d+)(e(\+|-)?(\d+))? | (\d+)e(\+|-)?(\d+))([lL]|[fF])?'
     t_STRING = r'(\"|\')([^\\\n]|(\\.))*?(\"|\')'
+
 
     def t_IDENT(t):
         r'[A-Za-z_][\w_]*'
         t.type = reserved_words.get(t.value, 'IDENT')
         return t
 
+
     def t_newline(t):
         r'\n+'
         t.lexer.lineno += len(t.value)
+
 
     def t_error(t):
         col = find_column(t.lexer.lexdata, t)
         print(f"Illegal character '{t.value}' at line {t.lineno}, col {col}")
         t.lexer.skip(1)
+
 
     def t_preprocessor(t):
         r'\#(.)*?\n'
